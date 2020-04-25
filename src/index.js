@@ -7,7 +7,7 @@ function takeWhile(fn) {
         source$.subscribe(
             {
                 next: v => fn(v) ? observer.next() : observer.complete(),
-                error: e => observer.error(),
+                error: e => observer.error(e),
                 completion: value => fn(value) ? observer.next() : observer.complete()
             }
         )
