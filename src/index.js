@@ -1,11 +1,14 @@
-import {AsyncSubject, interval, ReplaySubject, Subject} from 'rxjs';
-import {multicast, publish} from "rxjs/operators";
+import {AsyncSubject, from, interval, ReplaySubject, Subject} from 'rxjs';
+import {multicast, publish, refCount} from "rxjs/operators";
 
-const source$ = interval(500).pipe(
-    publish()
+const source$ = from('loremipsum').pipe(
+    publish(),
+    refCount()
 );
 
-source$.connect();
+setTimeout(()=>
+source$.subscribe(console.log)
+, 1000)
 setTimeout(()=>
 source$.subscribe(console.log)
 , 2000)
