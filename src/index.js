@@ -1,10 +1,8 @@
-import {interval, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Subject} from 'rxjs';
 import {subLog} from './utils'
 
-const source$ = new Subject();
+const source$ = new BehaviorSubject(0);
 const other$ = source$.asObservable();
 interval(500).subscribe(source$)
-
-setInterval(()=>
 other$.subscribe(console.log)
-,2000)
+
