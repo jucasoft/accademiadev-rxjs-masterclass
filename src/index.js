@@ -1,11 +1,10 @@
-import {Subject} from 'rxjs';
+import {interval, Subject} from 'rxjs';
 import {subLog} from './utils'
 
-const source$ = new Subject(1);
+const source$ = new Subject();
+const other$ = source$.asObservable();
+interval(500).subscribe(source$)
 
-source$.subscribe(console.log)
-source$.next(1)
-source$.subscribe(console.log)
-source$.subscribe(console.log)
-source$.next(1)
-source$.subscribe(console.log)
+setInterval(()=>
+other$.subscribe(console.log)
+,2000)
