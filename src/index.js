@@ -1,11 +1,12 @@
-import {AsyncSubject, interval, ReplaySubject} from 'rxjs';
+import {AsyncSubject, interval, ReplaySubject, Subject} from 'rxjs';
+import {multicast} from "rxjs/operators";
 
-const source$ = new AsyncSubject(3);
-source$.next(1);
-source$.next(2);
-source$.next(3);
-source$.next(4);
-source$.next(5);
+const source$ = interval(500).pipe(
+    multicast(new Subject())
+);
+
+source$.connect();
+setTimeout(()=>
 source$.subscribe(console.log)
-source$.complete()
+, 2000)
 
