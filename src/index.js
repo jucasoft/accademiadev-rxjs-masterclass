@@ -1,36 +1,43 @@
 import {BehaviorSubject, fromEvent, merge} from 'rxjs';
 import {mapTo} from "rxjs/operators";
-import {subLog} from "./utils";
+import {subLog} from './utils'
 
 function createStore(initialState) {
 
-    const state$ = new BehaviorSubject(initialState);
+    const store$ = new BehaviorSubject(initialState);
+
+    function getState() {
+        return store$.asObservable();
+    }
 
     function increment() {
-        state$.next(state$.getValue() + 1)
+        store$.next(store$.getValue() + 1)
     }
 
     function decrement() {
-        state$.next(state$.getValue() - 1)
+        store$.next(store$.getValue() - 1)
     }
 
     return {
-        getState: () => state$.asObservable(),
-        increment: () => increment(),
-        decrement: () => decrement(),
+        getState: getState,
+        increment: increment,
+        decrement: decrement
     }
 }
 
-const store = createStore(0);
-store.getState().subscribe(subLog('store'));
+const store$ = createStore(0);
 
-const sourceInc$ = fromEvent(document.querySelector('#increment'), 'click').pipe(mapTo(true));
-const sourceDec$ = fromEvent(document.querySelector('#decrement'), 'click').pipe(mapTo(false));
+store$.getState().subscribe(subLog('store'));
 
-merge(sourceInc$, sourceDec$).subscribe(next => {
-    if (next) {
-        store.increment();
-    } else {
-        store.decrement();
+const incState$ = fromEvent(document.querySelector('#increment'), 'click').pipe(mapTo(true));
+const decState$ = fromEvent(document.querySelector('#decrement'), 'click').pipe(mapTo(false));
+
+merge(incState$, decState$).subscribe(
+    next => {
+        if (next) {
+            store$.increment();
+        } else {
+            store$.decrement();
+        }
     }
-})
+)
