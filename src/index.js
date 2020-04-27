@@ -1,21 +1,20 @@
 import {fromEvent, merge, Subject} from 'rxjs';
-import {mapTo, publish, scan} from "rxjs/operators";
+import {mapTo, publish, scan, tap, timeout} from "rxjs/operators";
+
 
 const actions$ = new Subject();
-const initialState = {
-    counter: 0
-}
-
-actions$.subscribe(console.log)
+const initialState = {counter: 0};
 
 const createStore = (initialState, reducer) => {
     const result = actions$.pipe(
         scan(reducer, initialState),
+        tap(scanCallbackArg => console.log('scanCallbackArg', scanCallbackArg)),
         publish()
     )
     result.connect();
     return result;
 }
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case 'increment':
@@ -23,20 +22,19 @@ const reducer = (state = initialState, action) => {
         case 'decrement':
             return {counter: state.counter - 1}
     }
-    return state;
 }
 
 const store$ = createStore(initialState, reducer);
 
-setTimeout(()=>{
-    store$.subscribe(console.log)
-}, 3000)
+setTimeout(() => {
+    store$.subscribe(console.log);
+}, 3000);
 
 const incState$ = fromEvent(document.querySelector('#increment'), 'click').pipe(mapTo(true));
 const decState$ = fromEvent(document.querySelector('#decrement'), 'click').pipe(mapTo(false));
 
-merge(incState$, decState$).subscribe(
-    next => {
-        actions$.next(next ? {type: 'increment'} : {type: 'decrement'});
-    }
+merge(incState$, decState$).pipe(
+    tap(value => console.log('value', value)),
+).subscribe(
+    v => actions$.next(v ? {type: 'increment'} : {type: 'decrement'})
 )
