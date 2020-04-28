@@ -1,7 +1,7 @@
-# RxJS Masterclass Starter
+# RxJS Masterclass Starter (Typescript)
 
 Questo è il progetto iniziale per seguire le lezioni del corso RxJS Masterclass sul sito AccademiaDev (www.accademia.dev).
-
+Il progetto è stato modificato per poter essere compilato in Typescript
 
 ### Avviare il progetto
 ```bash

@@ -1,51 +1,57 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const WriteFilePlugin = require('write-file-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
-const config = {
-  entry: path.resolve(__dirname, 'src/index.js'),
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].[contenthash].js',
-  },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        use: 'babel-loader',
-        exclude: /node_modules/
-      }
-    ]
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'index.html')
-    }),
-    new CopyPlugin([{ from: 'assets', to: 'assets' }]),
-    new WriteFilePlugin()
-  ],
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all'
-        }
-      }
+module.exports = {
+    mode: "development",
+    entry: {
+        app: './src/index.ts'
+    },
+    devtool: 'inline-source-map', // source map per poter debuggare
+    plugins: [
+        new CleanWebpackPlugin(), // elimina i file precedentemente creati
+        new HtmlWebpackPlugin({
+            favicon: "./assets/img/favicon.png",
+            template: "./index.html"
+        }) // si occupa di importare i file js nell'html
+    ],
+    devServer: {
+        contentBase: '/dist'
+    },
+    output: {
+        filename: '[name].bundle.js', // [name] sintassi per usare variabili, in questo caso la chiave dell'oggetto "entry"
+        path: path.resolve(__dirname, 'dist')
+    },
+    resolve: {
+        extensions: ['.ts', '.js']
+    },
+    module: {
+        rules: [ // in questa sezione viene indicato il tipo di file che si vuole utilizzare e i relativi loader e configurazioni
+            {
+                test: /\.css$/, // regex
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
+            },
+            {
+                test: /\.html$/i,
+                loader: 'html-loader',
+            },
+            {
+                test: /\.ts$/, // regex
+                use: [
+                    'ts-loader'
+                ],
+                exclude: /node_modules/, // escludo il nome moduls dalla compilazione
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [
+                    'file-loader',
+                ],
+            }
+        ]
     }
-  },
-  stats: 'minimal',
-  devtool: 'source-map',
-  mode: 'development',
-  devServer: {
-    open: false,
-    contentBase: './dist',
-    inline: true,
-    port: 4000,
-  },
 };
 
-module.exports = config;
