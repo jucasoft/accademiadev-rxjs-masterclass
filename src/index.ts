@@ -1,4 +1,6 @@
 import './style.css'
-import {GestioneStoreBehaviorSubject} from './app/001-gestione-store-behaviorSubject /gestione-store-behaviorSubject';
+import {GestioneStatoAdAzioni} from './app/002-gestione-stato-ad-azioni/gestione-stato-ad-azioni';
+import {RistoranteReattivo} from './app/003-ristorante-reattivo/ristorante-reattivo ';
 
-new GestioneStoreBehaviorSubject();
+// new GestioneStatoAdAzioni();
+new RistoranteReattivo()
